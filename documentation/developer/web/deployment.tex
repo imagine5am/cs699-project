@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=0.8in]{geometry}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+ 
+\urlstyle{same}
+
+\title{pm9TrackingServer Deployment Instructions}
+\author{pm9}
+\date{November 2019}
+
+\begin{document}
+
+\maketitle
+
+The following are the steps to deploy the application used for tracking. We have used Kubernetes engine on Google Cloud Platform (GCP) for deployment. A major requirement of the application is to easily scale it up or down according to the requirement. This is the reason for deploying the application on Kubernetes, it makes it easy to add components according to requirement and the ability to scale them individually. Kubernetes also allows us to define configuration with \textbf{manifests.yaml} file.
+\begin{enumerate}
+\item
+To create a Kubernetes cluster an account on \url{www.console.cloud.google.com} needs to be created. A project along with a Kubernetes cluster needs to be created. Google cloud SDK also needs to be installed and initialized. After that \textit{kube} needs to be configured. To do all this steps please find the steps in the tutorial \href{https://medium.com/nycdev/deploy-to-a-managed-kubernetes-cluster-on-google-cloud-894d35b83619}{here}.
+\par
+\textit{kube} is the productive, open source way to manage containers and microservices, automating the time-consuming tasks of installing, patching, upgrading, and carrying out cluster health checks.
+\par In this step we have created a cluster and configured \textit{kube} to connect to the cluster.
+
+\item 
+Tracking server is a Gradle project. Install Gradle using \href{https://gradle.org}{this}. To build the Gradle project go the root for the project and use the following command
+\begin{lstlisting}
+$ ./gradlew bootWar
+\end{lstlisting}
+This creates a war file: \textit{./build/libs/trackingserver-0.0.1-SNAPSHOT.war}.
+\item Now we need to build a docker image for this application. To build the docker image, we first need to install Docker engine. For this use the tutorial at \url{https://docs.docker.com/install/linux/docker-ce/ubuntu/}. This tutorial shows how to install Docker engine on Ubuntu. Use the following command to create an image: \textit{docker image build . -t $\langle repository-name\rangle$/$\langle application-name\rangle$:$\langle version\rangle$}. This command is run at root of the tracking server application. Here a \textit{Dockerfile} is present which has the code to build the Docker image of the application. An example is shown here:
+\begin{lstlisting}
+$ docker image build . -t imagine5am/pm9-tracking-server:0.0.9
+\end{lstlisting}
+Before pushing this image, we need to first create an account on  \url{https://hub.docker.com}. After creating the account, use a command like the following to push the image:
+\begin{lstlisting}
+$ docker push imagine5am/pm9-tracking-server:0.0.9
+\end{lstlisting}
+Here \textit{imagine5am} is the name of the account on \url{https://hub.docker.com}.
+\item
+Now use the \textit{kubemanifests.yaml} to deploy the application. This file is created using \textit{docker-compose.yml} and a tool called  \href{https://kompose.io}{'kompose'}.
+\begin{lstlisting}
+$ kompose convert -f docker-compose.yml -o kubemanifests.yaml
+\end{lstlisting}
+After this file i.e. \textit{kubemanifests.yaml} is created \textit{'type: LoadBalancer'} is added under \textit{'web'} of kind \textit{'Service'}. This enables us to deploy the application on a public IP. See the sample file \textit{kubemanifests-master.yaml}.
+\par
+Note that \textit{docker-compose.yml} file currently uses the application version 0.0.9 of docker image at \url{https://hub.docker.com/r/imagine5am/pm9-tracking-server}. You can continue using it, in which case you can skip all theses steps except step 1 and directly go to the last step.
+\item
+You now need to deploy the application to Kubernetes engine:
+\begin{lstlisting}
+# kubectl apply -f kubemanifests.yaml
+\end{lstlisting}
+\pagebreak
+You can view the pods running on Kubernetes engine:
+\begin{lstlisting}
+# kubectl get pods
+\end{lstlisting}
+Results:
+\begin{lstlisting}
+NAME                     READY   STATUS    RESTARTS   AGE
+mysql-85877c9f76-mb9tv   1/1     Running   0          28h
+redis-85b98669-drl8v     1/1     Running   0          28h
+web-65858bd449-9jft5     1/1     Running   0          28h
+\end{lstlisting}
+You can view the services running on Kubernetes engine:
+\begin{lstlisting}
+# kubectl get svc
+\end{lstlisting}
+Results:
+\begin{lstlisting}
+NAME         TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP      10.56.0.1     <none>        443/TCP        29h
+mysql        ClusterIP      10.56.10.74   <none>        3306/TCP       28h
+redis        ClusterIP      10.56.5.167   <none>        6379/TCP       28h
+web          LoadBalancer   10.56.1.132   34.93.44.41   80:30631/TCP   28h
+\end{lstlisting}
+Your web service is now running at IP 34.93.44.41
+MySQL and Redis Server are also running at the IPs as seen in the results.
+To view logs use commands like the following:
+\begin{lstlisting}
+# kubectl logs web-65858bd449-9jft5
+\end{lstlisting}
+\end{enumerate}
+\begin{center}
+---x---
+\end{center}
+
+\end{document}
