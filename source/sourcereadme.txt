@@ -11,11 +11,8 @@ The registration portal for the organization is hosted on link -> http://server-
 
 Once the organization successfully registers/logs in, they receive an API key which is their unique identifier.
 
-Now the tracking application (Android) is installed on the devices which need to be tracked. In this application,
-need to enter the API key of their application to register the device. This step is only done for the first time.
+Now the tracking application (Android) is installed on the devices which need to be tracked. In this application, need to enter the API key of their application to register the device. This step is only done for the first time.
 
-In the tracking application, driver can enable/disable sending location details based on their 
-working hours.
+In the tracking application, driver can enable/disable sending location details based on their working hours.
 
-In the client app (which the organization needs to create), the location details of the drivers registered under the 
-organization can be displayed using a map.
+In the client app (which the organization needs to create), the location details of the drivers registered under the organization can be displayed using a map.
