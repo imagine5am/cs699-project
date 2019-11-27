@@ -1,0 +1,49 @@
+version: '3'
+services:
+  redis:
+    image: 'redis:4-alpine'
+    command: redis-server --requirepass password
+    ports:
+      - 6379:6379
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+        reservations:
+          cpus: '0.25'
+          memory: 50M
+    networks:
+      - back-tier
+  
+  mysql:
+    image: mysql:5.7.28
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=pm9_tracking_server
+      - MYSQL_USER=user1
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    networks:
+      - back-tier
+
+  web:
+    #build: 
+    #  context: .
+    image: imagine5am/pm9-tracking-server:0.0.9
+    ports:
+      - 80:8080
+    links:
+      - redis
+      - mysql
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - back-tier
+
+networks:
+  back-tier:
+    driver: bridge

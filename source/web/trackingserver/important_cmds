@@ -1,0 +1,63 @@
+./gradlew build
+./gradlew bootWar
+docker image build . -t imagine5am/pm9-tracking-server:0.0.9
+docker push imagine5am/pm9-tracking-server:0.0.9
+
+
+gradle clean build -x test
+
+java -jar  build/libs/trackingserver-0.0.1-SNAPSHOT.jar
+
+docker images
+
+minikube start -p minikube-vbox --vm-driver=virtualbox
+
+docker run --name mysql_1 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=pm9_tracking_server -e MYSQL_USER=user1 -e MYSQL_PASSWORD=password -d mysql:5.7.28
+
+docker run -p 8080:8080 -name pm9-tracking-server-1  --link mysql_2:mysql -d imagine5am/pm9-tracking-server:0.0.1
+
+docker logs pm9-tracking-server-1
+
+docker-compose config
+docker-compose up
+docker-compose down
+
+git clone --branch kubernete https://ssood@git.cse.iitb.ac.in/ssood/trackingserver.git
+
+sudo redis-server /etc/redis/redis.conf
+sudo /etc/init.d/mysql start
+
+sudo /etc/init.d/redis-server stop
+sudo /etc/init.d/mysql stop
+
+minikube start --vm-driver=virtualbox
+kubectl cluster-info
+kubectl get nodes
+kubectl get pods
+kubectl get deployments
+kubectl get svc
+kubectl get endpoints
+kubectl expose deployment <clustername> --type="LoadBalancer"
+#To get IP info
+kubectl get services <clustername> 	
+watch kubectl get po
+
+kubectl delete deployment redis mysql web
+kubectl delete pod,svc --all 
+kubectl delete --all pods
+
+
+kompose convert -f docker-compose.yml -o kubemanifests.yaml
+# replace extensions/v1beta1 with apps/v1
+kubectl apply -f kubemanifests.yaml
+
+sudo cp /etc/kubernetes/admin.conf $HOME/
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
+
+gcloud container clusters get-credentials prod1 --zone asia-south1-a --project pm9-tracking-server
+docker build -t gcr.io/pm9-tracking-server/basic-api:v1.1 .
+gcloud auth configure-docker
+docker push gcr.io/pm9-tracking-server/basic-api:v1.1
+gcloud compute instances list
+gcloud container clusters list

@@ -1,0 +1,90 @@
+URL: localhost:8080/api/status (GET)
+Response:
+{
+    "status": 100,
+    "message": "Working"
+}
+
+URL: localhost:8080/api/registerDevice (POST)
+
+Request:
+{
+"apiKey" : "SAMPLEAPIKEY",
+"deviceId": "DEVICEID3"
+}
+
+Response:
+{
+    "status": 200,
+    "message": "Success"
+}
+
+URL: localhost:8080/api/unregisterDevice (POST)
+
+Request:
+{
+"deviceId": "DEVICEID3"
+}
+
+Response:
+{
+    "status": 200,
+    "message": "Success"
+}
+
+URL: localhost:8080/api/submitLocation (POST)
+
+Request:
+{
+"apiKey" : "a252fe62-faa7-461f-aecd-4cd9cae40b61",
+"deviceId": "DEVICEID4",
+"latLng" : {
+               "lat" : 100.4224764,
+               "lng" : -122.0842499
+            }
+}
+
+Response:
+{
+    "status": 200,
+    "message": "Success"
+}
+
+URL: localhost:8080/api/getDeviceLocations (POST)
+
+Request:
+{
+"apiKey" : "a252fe62-faa7-461f-aecd-4cd9cae40b61"
+}
+
+Response:
+{
+    "DEVICEID1": {
+        "latLng": {
+            "lat": 100.4224764,
+            "lng": -122.0842499
+        },
+        "timestamp": "2019-11-23T13:40:53.432+0000"
+    },
+    "DEVICEID2": {
+        "latLng": {
+            "lat": 100.4224764,
+            "lng": -122.0842499
+        },
+        "timestamp": "2019-11-23T13:40:48.361+0000"
+    },
+    "DEVICEID3": {
+        "latLng": {
+            "lat": 100.4224764,
+            "lng": -122.0842499
+        },
+        "timestamp": "2019-11-23T13:40:42.728+0000"
+    },
+    "DEVICEID4": {
+        "latLng": {
+            "lat": 100.4224764,
+            "lng": -122.0842499
+        },
+        "timestamp": "2019-11-23T13:41:11.590+0000"
+    }
+}
