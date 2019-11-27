@@ -11,6 +11,7 @@ Akhil Dadi (19305R009)
 
 Motivation can be found in user documentation.
 ./documentation/developer/web/deplopment.pdf contains specifit details on how to host the server.
+Instructions to build the app can also be found in their respective documentation folder.
 
 Individual Contribution: 
 Shivam Sood created the web application i.e. the tracking server.
