@@ -1,0 +1,163 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: mysql
+    name: mysql
+  spec:
+    ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+    selector:
+      io.kompose.service: mysql
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: redis
+    name: redis
+  spec:
+    ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+    selector:
+      io.kompose.service: redis
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: web
+    name: web
+  spec:
+    type: LoadBalancer
+    ports:
+    - name: "80"
+      port: 80
+      targetPort: 8080
+    selector:
+      io.kompose.service: web
+  status:
+    loadBalancer: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: mysql
+    name: mysql
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: mysql
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_DATABASE
+            value: pm9_tracking_server
+          - name: MYSQL_PASSWORD
+            value: password
+          - name: MYSQL_ROOT_PASSWORD
+            value: password
+          - name: MYSQL_USER
+            value: user1
+          image: mysql:5.7.28
+          name: mysql
+          ports:
+          - containerPort: 3306
+          resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: redis
+    name: redis
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: redis
+      spec:
+        containers:
+        - args:
+          - redis-server
+          - --requirepass
+          - password
+          image: redis:4-alpine
+          name: redis
+          ports:
+          - containerPort: 6379
+          resources:
+            limits:
+              cpu: 500m
+              memory: "104857600"
+            requests:
+              cpu: 250m
+              memory: "52428800"
+        restartPolicy: Always
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o kubemanifests.yaml
+      kompose.version: 1.18.0 (06a2e56)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: web
+    name: web
+  spec:
+    replicas: 1
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: web
+      spec:
+        containers:
+        - image: imagine5am/pm9-tracking-server:0.0.9
+          name: web
+          ports:
+          - containerPort: 8080
+          resources: {}
+        restartPolicy: Always
+  status: {}
+kind: List
+metadata: {}
+
