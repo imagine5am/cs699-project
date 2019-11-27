@@ -14,3 +14,7 @@ Individual Contribution:
 Shivam Sood created the web application i.e. the tracking server.
 Amit Jaiswal created the android application for tracking.
 Akhil Dadi created modified the code for InstiApp as a way for us to demostrate our location tracking application.
+
+References:
+1. www.baeldung.com/jedis-java-redis-client-library
+2. hellokoding.com/registration-and-login-example-with-spring-security-spring-boot-spring-data-jpa-hsql-jsp/
