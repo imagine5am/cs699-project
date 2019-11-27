@@ -1,0 +1,3 @@
+http://arnab.ch/blog/2013/08/asynchronous-http-requests-in-android-using-volley/
+
+https://codinginflow.com/tutorials/android/write-text-file-to-internal-storage
